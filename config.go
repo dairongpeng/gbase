@@ -13,8 +13,9 @@ func init() {
 	config.SetEnvPrefix("CONFIG")
 	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	config.AutomaticEnv()
+
 }
 
-func Config() *viper.Viper {
+func Viper() *viper.Viper {
 	return config
 }
