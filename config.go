@@ -10,11 +10,11 @@ var config *viper.Viper
 
 func init() {
 	config = viper.New()
-	config.SetEnvPrefix("BASE")
+	config.SetEnvPrefix("CONFIG")
 	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	config.AutomaticEnv()
 }
 
-func V() *viper.Viper {
+func Config() *viper.Viper {
 	return config
 }
