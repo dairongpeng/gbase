@@ -1,4 +1,4 @@
-module github.com/gopher-core/base
+module github.com/dairongpeng/gbase
 
 go 1.16
 

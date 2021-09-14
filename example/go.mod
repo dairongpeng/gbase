@@ -1,9 +1,9 @@
-module github.com/gopher-core/base/example
+module github.com/dairongpeng/gbase/example
 
 go 1.16
 
-require github.com/gopher-core/base v1.0.1
+require github.com/dairongpeng/gbase v1.0.1
 
 replace (
-	github.com/gopher-core/base v1.0.1 => ../
+	github.com/dairongpeng/gbase v1.0.1 => ../
 )
