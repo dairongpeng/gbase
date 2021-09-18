@@ -1,3 +1,7 @@
+## install
+
+```go get github.com/dairongpeng/gbase```
+
 ## config
 
 - 运行项目前，配置需要的环境变量
