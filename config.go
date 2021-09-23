@@ -6,16 +6,15 @@ import (
 )
 
 // global config base on Viper
-var config *viper.Viper
+var v *viper.Viper
 
 func init() {
-	config = viper.New()
-	config.SetEnvPrefix("CONFIG")
-	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	config.AutomaticEnv()
-
+	v = viper.New()
+	v.SetEnvPrefix("CONFIG")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.AutomaticEnv()
 }
 
 func Viper() *viper.Viper {
-	return config
+	return v
 }

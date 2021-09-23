@@ -1,5 +1,1 @@
-package main
-
-func main() {
-	$END$
-}
+package cache
