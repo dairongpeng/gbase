@@ -1,10 +1,11 @@
-package base
+package gbase
 
 import (
 	"context"
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 	"os"
 	"runtime"
 	"strings"
@@ -27,6 +28,7 @@ const (
 
 func init() {
 	zerolog.TimeFieldFormat = time.RFC3339Nano
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack // Error().Stack().Err(err).Msg("") will print err stack
 	Logger = zerolog.New(os.Stdout).With().Logger().Level(zerolog.InfoLevel).Hook(LogHook{})
 	level := Viper().GetString("log.level")
 	switch logLevel(level) {

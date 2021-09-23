@@ -1,4 +1,4 @@
-package base
+package gbase
 
 import (
 	"github.com/spf13/viper"
