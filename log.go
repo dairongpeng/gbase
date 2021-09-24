@@ -67,10 +67,25 @@ func (LogHook) Run(event *zerolog.Event, level zerolog.Level, message string) {
 	// TODO add metric for log detail info
 }
 
+// AddLogValues appends items into the ctx value
+// if items is even number， the first one be key, after the key be value, and so on
+// if items is odd number, the last item will discard
+func AddLogValues(ctx context.Context, items ...string) context.Context {
+	if len(items) == 0 {
+		return ctx
+	}
+
+	logCtxFields := fromCtxLogItems(ctx)
+	for i := 0; i+1 < len(items); i += 2 {
+		logCtxFields[items[i]] = items[i+1]
+	}
+
+	return context.WithValue(ctx, logCtxKey, logCtxFields)
+}
+
 // WithLogContext returns Event. The event is already appends ctx kv
 func WithLogContext(ctx context.Context, event *zerolog.Event) *zerolog.Event {
-	// BackgroundCtx and TODOCtx are emptyCtx(root ctx). Compare BackgroundCtx and TODOCtx will return true
-	if ctx == initCtx {
+	if ctx == initCtx { // root ctx are equal.
 		return event
 	}
 
