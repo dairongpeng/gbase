@@ -7,5 +7,5 @@ import (
 
 func main() {
 	ctx := context.Background()
-	gbase.Info(ctx).Str("hello", "world").Msg("test log")
+	gbase.Info(ctx).Msg("hello world")
 }

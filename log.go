@@ -12,12 +12,19 @@ import (
 	"time"
 )
 
-var Logger zerolog.Logger
-var nilCtx = context.Background()
-var ctxLogKey ctxLogKeyType = "logFields"
+var (
+	// Logger is global Logger
+	Logger zerolog.Logger
+	// initCtx Provides a init ctx
+	initCtx = context.Background()
+	// logCtxKey is ctx contains map key
+	logCtxKey logCtxKeyType = "logCtxKey"
+)
 
-type ctxLogKeyType string
-type logLevel string
+type (
+	logCtxKeyType string
+	logLevel      string
+)
 
 const (
 	TRACE logLevel = "TRACE"
@@ -29,7 +36,7 @@ const (
 func init() {
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack // Error().Stack().Err(err).Msg("") will print err stack
-	zerolog.TimestampFieldName = "t"
+	zerolog.TimestampFieldName = "timestamp"
 	zerolog.LevelFieldName = "level"
 	zerolog.MessageFieldName = "msg"
 	Logger = zerolog.New(os.Stdout).With().Logger().Level(zerolog.InfoLevel).Hook(LogHook{})
@@ -60,32 +67,34 @@ func (LogHook) Run(event *zerolog.Event, level zerolog.Level, message string) {
 	// TODO add metric for log detail info
 }
 
-// WithLogContext let ctx k/v package to str log env
-func WithLogContext(ctx context.Context, e *zerolog.Event) *zerolog.Event {
-	if ctx == nilCtx {
-		return e
-	}
-	logFields := fromCtxLogItems(ctx)
-	if len(logFields) == 0 {
-		return e
+// WithLogContext returns Event. The event is already appends ctx kv
+func WithLogContext(ctx context.Context, event *zerolog.Event) *zerolog.Event {
+	// BackgroundCtx and TODOCtx are emptyCtx(root ctx). Compare BackgroundCtx and TODOCtx will return true
+	if ctx == initCtx {
+		return event
 	}
 
-	for k, v := range logFields {
-		e = e.Str(k, v)
+	logCtxFields := fromCtxLogItems(ctx)
+	if len(logCtxFields) == 0 {
+		return event
 	}
-	return e
+
+	for k, v := range logCtxFields {
+		event = event.Str(k, v)
+	}
+	return event
 }
 
-// fromCtxLogItems will decode ctx than get k v
+// fromCtxLogItems returns the map from ctx contains kv
 func fromCtxLogItems(ctx context.Context) map[string]string {
-	raw := ctx.Value(ctxLogKey)
+	raw := ctx.Value(string(logCtxKey))
 	if raw == nil {
 		return map[string]string{}
 	}
 	return raw.(map[string]string)
 }
 
-// appendEvents decide log user call or not
+// appendEvents decides append caller or not
 func appendEvents(event *zerolog.Event, addCaller bool) *zerolog.Event {
 	event.Timestamp()
 	if addCaller {
@@ -95,7 +104,7 @@ func appendEvents(event *zerolog.Event, addCaller bool) *zerolog.Event {
 	return event
 }
 
-// funcFileLine will build caller item. The aim is to send to upper layer App
+// funcFileLine find cur err pkg be include
 func funcFileLine(excludePKG string) (string, string, int) {
 	const depth = 8
 	var pcs [depth]uintptr
@@ -122,72 +131,72 @@ func funcFileLine(excludePKG string) (string, string, int) {
 	return fn, file, line
 }
 
-// Debug will get log.event with DEBUG level
+// Debug returns Event by debug level
 func Debug(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Debug(), false))
 }
 
-// DebugWithoutCtx will get log.event with DEBUG level without context
+// DebugWithoutCtx returns Event by debug level without ctx
 func DebugWithoutCtx() *zerolog.Event {
-	return Debug(nilCtx)
+	return Debug(initCtx)
 }
 
-// Info will get log.event with INFO level
+// Info returns Event by info level
 func Info(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Info(), false))
 }
 
-// InfoWithoutCtx will get log.event with INFO level without context
+// InfoWithoutCtx returns Event by info level without ctx
 func InfoWithoutCtx() *zerolog.Event {
-	return Info(nilCtx)
+	return Info(initCtx)
 }
 
-// Warn will get log.event with WARN level
+// Warn returns Event by warn level
 func Warn(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Warn(), true))
 }
 
-// WarnWithoutCaller will get log.event with WARN level no caller
+// WarnWithoutCaller returns Event by warn level without caller
 func WarnWithoutCaller(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Warn(), false))
 }
 
-// WarnWithoutCtx will get log.event with WARN level without ctx
+// WarnWithoutCtx returns Event by warn level without ctx
 func WarnWithoutCtx() *zerolog.Event {
-	return Warn(nilCtx)
+	return Warn(initCtx)
 }
 
-// Error will get log.event with ERROR level without ctx
+// Error returns Event by error level
 func Error(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Error(), true))
 }
 
-// Err will get log.event with ERROR level
+// Err returns Event by error level and print parameter err
 func Err(ctx context.Context, err error) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Err(err), true))
 }
 
-// ErrorWithoutCaller will get log.event with ERROR level no caller
+// ErrorWithoutCaller returns Event by error level without caller
 func ErrorWithoutCaller(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Error(), false))
 }
 
-// ErrorWithoutCtx will get log.event with ERROR level without ctx
+// ErrorWithoutCtx returns Event by error level without ctx
 func ErrorWithoutCtx() *zerolog.Event {
-	return Error(nilCtx)
+	return Error(initCtx)
 }
 
-// Fatal will get log.event with FATAL level
+// Fatal returns Event by fatal level
 func Fatal(ctx context.Context) *zerolog.Event {
 	return WithLogContext(ctx, appendEvents(log.Fatal(), true))
 }
 
-// FatalWithoutCtx will get log.event with FATAL level without ctx
+// FatalWithoutCtx returns Event by fatal level without ctx
 func FatalWithoutCtx() *zerolog.Event {
-	return Fatal(nilCtx)
+	return Fatal(initCtx)
 }
 
-// WarnErr will get log.event with WARN and contains a ERROR level log
+// WarnErr returns Event by warn level and print parameter err
 func WarnErr(ctx context.Context, err error) {
 	Warn(ctx).Err(err).Send()
 }
