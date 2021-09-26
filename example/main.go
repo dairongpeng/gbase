@@ -19,8 +19,8 @@ func LogDebug(ctx context.Context) {
 }
 
 func ConfigDebug(ctx context.Context) {
-	name := gbase.Viper().GetString("name")
+	name := gbase.Cfg().GetString("name")
 	fmt.Println(name)
-	port := gbase.Viper().GetString("http.port")
+	port := gbase.Cfg().GetString("http.port")
 	fmt.Println(port)
 }

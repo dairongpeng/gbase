@@ -31,7 +31,7 @@ func initViper() {
 	initLog()
 }
 
-func Viper() *viper.Viper {
+func Cfg() *viper.Viper {
 	if v == nil {
 		gbaseOnce.Do(initViper)
 	}

@@ -39,7 +39,7 @@ func initLog() {
 	zerolog.LevelFieldName = "level"
 	zerolog.MessageFieldName = "msg"
 	Logger = zerolog.New(os.Stdout).With().Logger().Level(zerolog.InfoLevel).Hook(LogHook{})
-	level := Viper().GetString("log.level")
+	level := Cfg().GetString("log.level")
 	switch logLevel(level) {
 	case TRACE:
 		Logger = Logger.Level(zerolog.TraceLevel)
