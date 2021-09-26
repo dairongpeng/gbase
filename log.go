@@ -17,8 +17,8 @@ var (
 	Logger zerolog.Logger
 	// initCtx Provides a init ctx
 	initCtx = context.Background()
-	// LogCtxKey is ctx contains map key
-	LogCtxKey = "logCtxKey"
+	// logCtxKey is ctx contains map key
+	logCtxKey = "logCtxKey"
 )
 
 type (
@@ -84,7 +84,7 @@ func AddLogValues(ctx context.Context, items ...string) context.Context {
 		logCtxFields[items[i]] = items[i+1]
 	}
 
-	return context.WithValue(ctx, LogCtxKey, logCtxFields)
+	return context.WithValue(ctx, logCtxKey, logCtxFields)
 }
 
 // WithLogContext returns Event. The event is already appends ctx kv
@@ -106,7 +106,7 @@ func WithLogContext(ctx context.Context, event *zerolog.Event) *zerolog.Event {
 
 // fromCtxLogItems returns the map from ctx contains kv
 func fromCtxLogItems(ctx context.Context) map[string]string {
-	raw := ctx.Value(string(LogCtxKey))
+	raw := ctx.Value(logCtxKey)
 	if raw == nil {
 		return map[string]string{}
 	}
