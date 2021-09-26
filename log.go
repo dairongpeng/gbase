@@ -18,12 +18,11 @@ var (
 	// initCtx Provides a init ctx
 	initCtx = context.Background()
 	// LogCtxKey is ctx contains map key
-	LogCtxKey logCtxKeyType = "logCtxKey"
+	LogCtxKey = "logCtxKey"
 )
 
 type (
-	logCtxKeyType string
-	logLevel      string
+	logLevel string
 )
 
 const (
@@ -33,7 +32,7 @@ const (
 	ERROR logLevel = "ERROR"
 )
 
-func init() {
+func initLog() {
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack // Error().Stack().Err(err).Msg("") will print err stack
 	zerolog.TimestampFieldName = "timestamp"
@@ -61,6 +60,11 @@ func init() {
 	log.Logger = Logger
 }
 
+// InitLogger Provides for manual initialization by upper layer applications
+func InitLogger() {
+	gbaseOnce.Do(initLog)
+}
+
 type LogHook struct{}
 
 func (LogHook) Run(event *zerolog.Event, level zerolog.Level, message string) {
@@ -80,7 +84,7 @@ func AddLogValues(ctx context.Context, items ...string) context.Context {
 		logCtxFields[items[i]] = items[i+1]
 	}
 
-	return context.WithValue(ctx, string(LogCtxKey), logCtxFields)
+	return context.WithValue(ctx, LogCtxKey, logCtxFields)
 }
 
 // WithLogContext returns Event. The event is already appends ctx kv
