@@ -1,2 +1,13 @@
+log:
+  lelve: debug
+
 http:
   port: 8888
+
+# ? 分割 dns 和 param
+mysql:
+  dsn: root:password@tcp(127.0.0.1:3306)/dbname?parseTime=true&tls=false&charset=utf8mb4&collation=utf8mb4_general_ci
+  maxIdleConn: 100
+  maxOpenConn: 200
+  maxIdleSec: 0
+  maxLifeSec: 100
