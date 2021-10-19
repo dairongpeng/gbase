@@ -3,6 +3,7 @@ package gbase
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
+	"time"
 )
 
 // NewKafkaConfig 获取sarama默认配置
@@ -47,15 +48,15 @@ func NewAsyncProducer(client sarama.Client) (sarama.AsyncProducer, error) {
 }
 
 //// Consumer 消费者
-//type Consumer struct {
-//	Client         sarama.Client
-//	ConsumerGroup  sarama.ConsumerGroup
-//	ConsumeFunc    ConsumeFunc
-//	MaxElapsedTime time.Duration
-//
-//	Ready chan struct{}
-//}
-//
+type Consumer struct {
+	Client        sarama.Client
+	ConsumerGroup sarama.ConsumerGroup
+	//ConsumeFunc    ConsumeFunc
+	MaxElapsedTime time.Duration
+
+	Ready chan struct{}
+}
+
 //// ConsumeFunc 如果消费失败，返回error。返回error的消息会反复重试
 //type ConsumeFunc func(context.Context, *sarama.ConsumerMessage) error
 //
