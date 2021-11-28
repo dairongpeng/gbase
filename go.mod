@@ -6,6 +6,7 @@ require (
 	github.com/Shopify/sarama v1.30.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/json-iterator/go v1.1.11
 	github.com/rs/zerolog v1.25.0
 	github.com/spf13/viper v1.8.1
 	github.com/uptrace/bun v1.0.11
