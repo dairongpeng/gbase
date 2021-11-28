@@ -19,7 +19,7 @@ func NewKafkaConfig() *sarama.Config {
 
 // NewKafkaClient 获取Kafka的Client
 func NewKafkaClient(name string, config *sarama.Config) (sarama.Client, error) {
-	addrs := Cfg().GetStringSlice(name + ".addrs")
+	addrs := Viper().GetStringSlice(name + ".addrs")
 	client, err := sarama.NewClient(addrs, config)
 	if err != nil {
 		return nil, fmt.Errorf("new sarama client: %w", err)
